@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ваше приглашение</title>
+<title>FÉERIE: A FANTASY AFFAIR</title>
 <style>
   :root {
-    --accent: #4a90e2;
-    --accent-rgb: 74, 144, 226;
+    --accent: #e63996;
+    --accent-rgb: 230, 57, 150;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -17,20 +17,19 @@
   body {
     display: grid;
     place-items: center;
-    background: #0a0a12;
+    background: #0a0812;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     color: #2c2c3a;
     overflow: hidden;
     position: relative;
   }
 
-  /* мягкое свечение акцентного цвета на фоне, проявляется при открытии */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
     background: radial-gradient(circle at 50% 45%,
-      rgba(var(--accent-rgb), 0.45) 0%,
+      rgba(var(--accent-rgb), 0.5) 0%,
       transparent 55%);
     opacity: 0;
     transition: opacity 1.6s ease;
@@ -39,7 +38,7 @@
   }
   body.opened::before { opacity: 1; }
 
-  /* ======================= СЦЕНА С КОНВЕРТОМ ======================= */
+  /* ======================= СЦЕНА ======================= */
   .stage {
     position: relative;
     z-index: 1;
@@ -74,7 +73,6 @@
     transition: opacity 0.6s ease 1.3s, transform 0.6s ease 1.3s;
   }
 
-  /* задняя стенка конверта */
   .envelope__back {
     position: absolute;
     inset: 0;
@@ -85,19 +83,16 @@
       inset 0 1px 0 rgba(255, 255, 255, 0.6);
   }
 
-  /* карман — передняя часть конверта (скрывает письмо) */
   .envelope__pocket {
     position: absolute;
     inset: 0;
     background: linear-gradient(160deg, #faf4e6 0%, #e8dcc4 100%);
     border-radius: 8px;
-    /* V-образный вырез сверху */
     clip-path: polygon(0 0, 50% 55%, 100% 0, 100% 100%, 0 100%);
     z-index: 3;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
   }
 
-  /* клапан конверта */
   .envelope__flap {
     position: absolute;
     top: 0;
@@ -117,7 +112,6 @@
     transform: rotateX(-180deg);
   }
 
-  /* восковая печать */
   .envelope__seal {
     position: absolute;
     top: 38%;
@@ -140,7 +134,7 @@
     inset: 0;
     display: grid;
     place-items: center;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.75);
     font-size: 18px;
   }
   .envelope.open .envelope__seal {
@@ -148,7 +142,6 @@
     transform: translate(-50%, -50%) scale(0.4);
   }
 
-  /* письмо внутри */
   .letter {
     position: absolute;
     left: 12px;
@@ -173,7 +166,7 @@
     transform: translateY(-70%);
   }
 
-  /* ======================= КАРТОЧКА (появляется после) ======================= */
+  /* ======================= КАРТОЧКА ======================= */
   .card {
     position: fixed;
     inset: 0;
@@ -192,7 +185,7 @@
 
   .card__inner {
     position: relative;
-    width: min(440px, 100%);
+    width: min(460px, 100%);
     background: #ffffff;
     border-radius: 22px;
     padding: 56px 40px 48px;
@@ -212,7 +205,6 @@
     opacity: 1;
   }
 
-  /* акцентная полоска сверху */
   .card__inner::before {
     content: '';
     position: absolute;
@@ -239,20 +231,20 @@
   }
 
   .card__subtitle {
-    font-size: 14px;
+    font-size: 13px;
     color: #7a7a8c;
-    margin-bottom: 32px;
+    margin-bottom: 30px;
+    line-height: 1.5;
   }
 
-  /* цветной круг */
   .swatch {
     width: 96px;
     height: 96px;
-    margin: 0 auto 24px;
+    margin: 0 auto 22px;
     border-radius: 50%;
     background: var(--accent);
     box-shadow:
-      0 14px 32px -8px rgba(var(--accent-rgb), 0.65),
+      0 14px 32px -8px rgba(var(--accent-rgb), 0.7),
       inset 0 -6px 12px rgba(0, 0, 0, 0.15),
       inset 0 6px 12px rgba(255, 255, 255, 0.35);
     transition: background 1s ease, box-shadow 1s ease;
@@ -265,18 +257,38 @@
   }
 
   .card__color-name {
-    font-size: 22px;
+    font-size: 13px;
     font-weight: 600;
-    color: var(--accent);
-    margin-bottom: 26px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #9a9aaa;
+    margin-bottom: 6px;
     transition: color 1s ease;
+  }
+
+  .card__color-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 18px;
+    letter-spacing: -0.3px;
+    transition: color 1s ease;
+  }
+
+  .card__traits {
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #6a6a7c;
+    margin-bottom: 24px;
+    font-weight: 500;
   }
 
   .card__divider {
     width: 40px;
     height: 1px;
     background: #e0e0ea;
-    margin: 0 auto 26px;
+    margin: 0 auto 24px;
   }
 
   .card__text {
@@ -290,7 +302,6 @@
     font-weight: 600;
   }
 
-  /* подсказка */
   .hint {
     font-size: 12px;
     color: rgba(255, 255, 255, 0.45);
@@ -306,11 +317,11 @@
   }
   .hint.hidden { opacity: 0; pointer-events: none; }
 
-  /* мобильные */
   @media (max-width: 480px) {
     .envelope { width: 280px; height: 200px; }
     .card__inner { padding: 44px 26px 36px; }
     .card__name { font-size: 24px; }
+    .card__color-title { font-size: 22px; }
     .swatch { width: 80px; height: 80px; }
   }
 </style>
@@ -330,11 +341,13 @@
 
   <div class="card" id="card">
     <div class="card__inner">
-      <div class="card__label">Ваш образ</div>
+      <div class="card__label">FÉERIE · A FANTASY AFFAIR</div>
       <div class="card__name" id="nameEl">Гость</div>
-      <div class="card__subtitle">Цвет, который выпал именно вам</div>
+      <div class="card__subtitle">Ваша магическая энергия на этот вечер</div>
       <div class="swatch"></div>
       <div class="card__color-name" id="colorNameEl">—</div>
+      <div class="card__color-title" id="colorTitleEl">—</div>
+      <div class="card__traits" id="traitsEl">—</div>
       <div class="card__divider"></div>
       <p class="card__text" id="recommendationsEl"></p>
     </div>
@@ -342,55 +355,81 @@
 
 <script>
   // =================== 8 базовых цветов ===================
-  // Ключи используются в URL: ?color=blue
+  // Ключи для URL: pink, orange, lilac, golden, blue, green, cherry, pearl
   const COLORS = {
-    red: {
-      hex: '#d94a3d', rgb: '217, 74, 61', name: 'Красный',
-      text: 'Ваш цвет — <strong>красный</strong>. Это цвет энергии, страсти и уверенности. Он притягивает взгляды и задаёт тон всему образу.<br><br>В гардеробе обратите внимание на рубашки глубокого винного оттенка, аксессуары с тёплым подтоном, обувь из коричневой кожи. Избегайте холодных оттенков — пусть всё будет тёплым и насыщенным.'
+    pink: {
+      hex: '#e63996', rgb: '230, 57, 150',
+      name: 'FAIRY PINK',
+      title: 'Фуксия',
+      traits: 'Яркая магия · Смелость · Игривость',
+      text: 'Насыщенный, сочный розовый — цвет дофаминового всплеска, кокетства и беззаботной радости. Для тех, кто любит быть заметным и добавлять образу дерзкий акцент.'
     },
     orange: {
-      hex: '#e8892b', rgb: '232, 137, 43', name: 'Оранжевый',
-      text: 'Ваш цвет — <strong>оранжевый</strong>. Это цвет тепла, открытости и творчества. Он говорит о лёгкости и дружелюбии.<br><br>Подойдут бежевые и песочные тона в базе, оранжевые акценты в аксессуарах, тёплые оттенки кожи. Сочетайте с мягким хаки и молочным — получится гармоничный и живой образ.'
+      hex: '#f57e20', rgb: '245, 126, 32',
+      name: 'PIXIE ORANGE',
+      title: 'Мандариновый',
+      traits: 'Энергия · Тепло · Спонтанность',
+      text: 'Солнечный мандариновый оттенок, наполненный движением и жизнью. Он символизирует искру, веселье и ту самую магию, которая превращает обычный вечер в приключение.'
     },
-    yellow: {
-      hex: '#e6c34a', rgb: '230, 195, 74', name: 'Жёлтый',
-      text: 'Ваш цвет — <strong>жёлтый</strong>. Это цвет света, оптимизма и ясности. Он приносит радость и располагает к общению.<br><br>Попробуйте светло-серую базу, жёлтые детали в виде платка, сумки или украшений, белые рубашки. Жёлтый любит простоту и чистые формы — не перегружайте образ.'
+    lilac: {
+      hex: '#a98ed6', rgb: '169, 142, 214',
+      name: 'MYSTIC LILAC',
+      title: 'Лавандовый',
+      traits: 'Загадка · Мечтательность · Интуиция',
+      text: 'Дымчатая лаванда с мистическим сиянием. Цвет лунного света, тайных желаний и фантазий, которые постепенно становятся реальностью.'
     },
-    green: {
-      hex: '#4a9d6a', rgb: '74, 157, 106', name: 'Зелёный',
-      text: 'Ваш цвет — <strong>зелёный</strong>. Это цвет спокойствия, роста и природной гармонии. Он ассоциируется с надёжностью и внутренним равновесием.<br><br>Вам к лицу оливковые и изумрудные оттенки, натуральные ткани, деревянные аксессуары, обувь в земляных тонах. Хорошо сочетается с бежевым, белым и тёмно-серым.'
+    golden: {
+      hex: '#f2cd5c', rgb: '242, 205, 92',
+      name: 'GOLDEN FAIRY',
+      title: 'Сливочно-жёлтый',
+      traits: 'Сияние · Лёгкость · Оптимизм',
+      text: 'Нежный оттенок сливочного масла с золотистым свечением. Он напоминает солнечные блики, тёплые мечты и волшебную пыльцу в воздухе.'
     },
     blue: {
-      hex: '#4a90e2', rgb: '74, 144, 226', name: 'Голубой',
-      text: 'Ваш цвет — <strong>голубой</strong>. Это цвет лёгкости, воздуха и доверия. Он создаёт ощущение свежести и открытости.<br><br>Подойдут белые и молочные базовые вещи, голубые рубашки и платья, серебряные украшения, светлая обувь. Отлично смотрится с серым и песочным — получится элегантный повседневный образ.'
+      hex: '#1e5fd6', rgb: '30, 95, 214',
+      name: 'FAIRY BLUE',
+      title: 'Кобальтовый',
+      traits: 'Сила · Тайна · Магнетизм',
+      text: 'Глубокий, электрический синий — как ночное небо в момент, когда загораются звёзды. Цвет уверенности, внутренней силы и притягательной загадочности.'
     },
-    navy: {
-      hex: '#2c4a7c', rgb: '44, 74, 124', name: 'Синий',
-      text: 'Ваш цвет — <strong>синий</strong>. Это цвет глубины, элегантности и уверенности. Он говорит о спокойной силе и вкусе.<br><br>В гардеробе — тёмно-синие брюки и пиджаки, белые рубашки, кожаные аксессуары, серебро. Синий универсален: сочетайте с серым, бежевым, бордовым. Это цвет, который всегда выглядит дорого.'
+    green: {
+      hex: '#8fc47a', rgb: '143, 196, 122',
+      name: 'ENCHANTED GREEN',
+      title: 'Фисташковый',
+      traits: 'Свежесть · Природа · Обновление',
+      text: 'Светлый фисташковый — словно цвет зачарованного сада на рассвете. Он приносит в сказку спокойствие, свежесть и ощущение нового начала.'
     },
-    purple: {
-      hex: '#8a5cb8', rgb: '138, 92, 184', name: 'Фиолетовый',
-      text: 'Ваш цвет — <strong>фиолетовый</strong>. Это цвет творчества, интуиции и внутренней глубины. Он выделяет из толпы и говорит об индивидуальности.<br><br>Попробуйте серую и чёрную базу, фиолетовые акценты в виде шарфа или украшений, ткани с лёгким блеском. Избегайте ярких контрастов — пусть образ будет загадочным и глубоким.'
+    cherry: {
+      hex: '#8a1528', rgb: '138, 21, 40',
+      name: 'CHERRY SPELL',
+      title: 'Вишнёвый',
+      traits: 'Страсть · Соблазн · Драма',
+      text: 'Глубокий вишнёво-красный с оттенком вина. Цвет запретных желаний, чувственности и эффектных появлений — немного тёмной магии в мире ярких красок.'
     },
-    pink: {
-      hex: '#e07a9e', rgb: '224, 122, 158', name: 'Розовый',
-      text: 'Ваш цвет — <strong>розовый</strong>. Это цвет нежности, романтики и тепла. Он смягчает образ и добавляет ему лёгкости.<br><br>Вам подойдут пудровые и молочные оттенки в базе, розовые аксессуары, жемчужные украшения, светлые ткани. Сочетайте с серым и белым — получится утончённый и современный образ.'
+    pearl: {
+      hex: '#a8b4c4', rgb: '168, 180, 196',
+      name: 'PEARL MUSE',
+      title: 'Жемчужно-серебряный',
+      traits: 'Элегантность · Свет · Невесомость',
+      text: 'Перламутровый серебристый с холодным сиянием. Он напоминает лунное отражение на воде, хрусталь и тонкую магию, которая не нуждается в ярких словах.'
     }
   };
 
   // =================== Читаем параметры из URL ===================
-  const params  = new URLSearchParams(location.search);
-  const key     = (params.get('color') || 'blue').toLowerCase();
-  const name    = params.get('name') || 'Дорогой гость';
-  const color   = COLORS[key] || COLORS.blue;
+  const params = new URLSearchParams(location.search);
+  const key    = (params.get('color') || 'pink').toLowerCase();
+  const name   = params.get('name') || 'Дорогой гость';
+  const color  = COLORS[key] || COLORS.pink;
 
   // =================== Подставляем данные ===================
   document.documentElement.style.setProperty('--accent', color.hex);
   document.documentElement.style.setProperty('--accent-rgb', color.rgb);
 
-  document.getElementById('nameEl').textContent           = name;
-  document.getElementById('colorNameEl').textContent      = color.name;
-  document.getElementById('recommendationsEl').innerHTML  = color.text;
+  document.getElementById('nameEl').textContent          = name;
+  document.getElementById('colorNameEl').textContent     = color.name;
+  document.getElementById('colorTitleEl').textContent    = color.title;
+  document.getElementById('traitsEl').textContent        = color.traits;
+  document.getElementById('recommendationsEl').innerHTML = color.text;
 
   // =================== Логика открытия ===================
   const envelope = document.getElementById('envelope');
@@ -406,7 +445,6 @@
     hint.classList.add('hidden');
     document.body.classList.add('opened');
 
-    // Карточка появляется, когда письмо уже «вылетело»
     setTimeout(() => card.classList.add('show'), 1500);
   }
 
