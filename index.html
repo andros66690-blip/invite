@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ваше приглашение</title>
+<style>
+  :root {
+    --accent: #4a90e2;
+    --accent-rgb: 74, 144, 226;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { height: 100%; }
+
+  body {
+    display: grid;
+    place-items: center;
+    background: #0a0a12;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #2c2c3a;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* мягкое свечение акцентного цвета на фоне, проявляется при открытии */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 50% 45%,
+      rgba(var(--accent-rgb), 0.45) 0%,
+      transparent 55%);
+    opacity: 0;
+    transition: opacity 1.6s ease;
+    pointer-events: none;
+    z-index: 0;
+  }
+  body.opened::before { opacity: 1; }
+
+  /* ======================= СЦЕНА С КОНВЕРТОМ ======================= */
+  .stage {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 42px;
+  }
+
+  .envelope {
+    position: relative;
+    width: 340px;
+    height: 240px;
+    perspective: 1400px;
+    cursor: pointer;
+    animation: breathe 3.5s ease-in-out infinite;
+    transition: transform 0.5s ease;
+  }
+
+  .envelope:hover { animation-play-state: paused; transform: scale(1.05); }
+
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.04); }
+  }
+
+  .envelope.open {
+    animation: none;
+    opacity: 0;
+    transform: scale(0.92);
+    pointer-events: none;
+    transition: opacity 0.6s ease 1.3s, transform 0.6s ease 1.3s;
+  }
+
+  /* задняя стенка конверта */
+  .envelope__back {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, #f0e8d8 0%, #d8ccb4 100%);
+    border-radius: 8px;
+    box-shadow:
+      0 25px 60px rgba(0, 0, 0, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  }
+
+  /* карман — передняя часть конверта (скрывает письмо) */
+  .envelope__pocket {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, #faf4e6 0%, #e8dcc4 100%);
+    border-radius: 8px;
+    /* V-образный вырез сверху */
+    clip-path: polygon(0 0, 50% 55%, 100% 0, 100% 100%, 0 100%);
+    z-index: 3;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+
+  /* клапан конверта */
+  .envelope__flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 55%;
+    background: linear-gradient(180deg, #efe6d0 0%, #d4c8ac 100%);
+    clip-path: polygon(0 0, 50% 100%, 100% 0);
+    transform-origin: top center;
+    transition: transform 0.9s cubic-bezier(0.6, 0, 0.4, 1);
+    z-index: 4;
+    backface-visibility: hidden;
+    filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.15));
+  }
+
+  .envelope.open .envelope__flap {
+    transform: rotateX(-180deg);
+  }
+
+  /* восковая печать */
+  .envelope__seal {
+    position: absolute;
+    top: 38%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #c0392b, #7a1a1a);
+    box-shadow:
+      inset 0 -3px 6px rgba(0, 0, 0, 0.45),
+      inset 0 3px 6px rgba(255, 255, 255, 0.2),
+      0 3px 8px rgba(0, 0, 0, 0.45);
+    z-index: 5;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .envelope__seal::after {
+    content: '✦';
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 18px;
+  }
+  .envelope.open .envelope__seal {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+
+  /* письмо внутри */
+  .letter {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    top: 24px;
+    background: #fafaf6;
+    border-radius: 6px;
+    z-index: 2;
+    transform: translateY(0);
+    transition: transform 1s cubic-bezier(0.6, 0, 0.3, 1) 0.5s;
+    overflow: hidden;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    display: grid;
+    place-items: center;
+    color: #c8b898;
+    letter-spacing: 6px;
+    font-size: 14px;
+  }
+
+  .envelope.open .letter {
+    transform: translateY(-70%);
+  }
+
+  /* ======================= КАРТОЧКА (появляется после) ======================= */
+  .card {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2;
+    transition: opacity 0.4s ease 1.5s;
+  }
+  .card.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .card__inner {
+    position: relative;
+    width: min(440px, 100%);
+    background: #ffffff;
+    border-radius: 22px;
+    padding: 56px 40px 48px;
+    text-align: center;
+    box-shadow:
+      0 40px 80px -20px rgba(0, 0, 0, 0.55),
+      0 0 0 1px rgba(255, 255, 255, 0.06);
+    transform: translateY(30px) scale(0.94);
+    opacity: 0;
+    transition:
+      transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 1.5s,
+      opacity 0.9s ease 1.5s;
+    overflow: hidden;
+  }
+  .card.show .card__inner {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+
+  /* акцентная полоска сверху */
+  .card__inner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: var(--accent);
+    transition: background 1s ease;
+  }
+
+  .card__label {
+    font-size: 11px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: #9a9aaa;
+    margin-bottom: 20px;
+  }
+
+  .card__name {
+    font-size: 28px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+  }
+
+  .card__subtitle {
+    font-size: 14px;
+    color: #7a7a8c;
+    margin-bottom: 32px;
+  }
+
+  /* цветной круг */
+  .swatch {
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 24px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow:
+      0 14px 32px -8px rgba(var(--accent-rgb), 0.65),
+      inset 0 -6px 12px rgba(0, 0, 0, 0.15),
+      inset 0 6px 12px rgba(255, 255, 255, 0.35);
+    transition: background 1s ease, box-shadow 1s ease;
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.06); }
+  }
+
+  .card__color-name {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 26px;
+    transition: color 1s ease;
+  }
+
+  .card__divider {
+    width: 40px;
+    height: 1px;
+    background: #e0e0ea;
+    margin: 0 auto 26px;
+  }
+
+  .card__text {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #4a4a5c;
+    text-align: left;
+  }
+  .card__text strong {
+    color: #1a1a2e;
+    font-weight: 600;
+  }
+
+  /* подсказка */
+  .hint {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    animation: hintPulse 2.5s ease-in-out infinite;
+    transition: opacity 0.4s ease;
+    cursor: pointer;
+  }
+  @keyframes hintPulse {
+    0%, 100% { opacity: 0.45; }
+    50%      { opacity: 0.95; }
+  }
+  .hint.hidden { opacity: 0; pointer-events: none; }
+
+  /* мобильные */
+  @media (max-width: 480px) {
+    .envelope { width: 280px; height: 200px; }
+    .card__inner { padding: 44px 26px 36px; }
+    .card__name { font-size: 24px; }
+    .swatch { width: 80px; height: 80px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="stage">
+    <div class="envelope" id="envelope">
+      <div class="envelope__back"></div>
+      <div class="letter">✦ ✦ ✦</div>
+      <div class="envelope__pocket"></div>
+      <div class="envelope__flap"></div>
+      <div class="envelope__seal"></div>
+    </div>
+    <p class="hint" id="hint">Нажмите на конверт</p>
+  </div>
+
+  <div class="card" id="card">
+    <div class="card__inner">
+      <div class="card__label">Ваш образ</div>
+      <div class="card__name" id="nameEl">Гость</div>
+      <div class="card__subtitle">Цвет, который выпал именно вам</div>
+      <div class="swatch"></div>
+      <div class="card__color-name" id="colorNameEl">—</div>
+      <div class="card__divider"></div>
+      <p class="card__text" id="recommendationsEl"></p>
+    </div>
+  </div>
+
+<script>
+  // =================== 8 базовых цветов ===================
+  // Ключи используются в URL: ?color=blue
+  const COLORS = {
+    red: {
+      hex: '#d94a3d', rgb: '217, 74, 61', name: 'Красный',
+      text: 'Ваш цвет — <strong>красный</strong>. Это цвет энергии, страсти и уверенности. Он притягивает взгляды и задаёт тон всему образу.<br><br>В гардеробе обратите внимание на рубашки глубокого винного оттенка, аксессуары с тёплым подтоном, обувь из коричневой кожи. Избегайте холодных оттенков — пусть всё будет тёплым и насыщенным.'
+    },
+    orange: {
+      hex: '#e8892b', rgb: '232, 137, 43', name: 'Оранжевый',
+      text: 'Ваш цвет — <strong>оранжевый</strong>. Это цвет тепла, открытости и творчества. Он говорит о лёгкости и дружелюбии.<br><br>Подойдут бежевые и песочные тона в базе, оранжевые акценты в аксессуарах, тёплые оттенки кожи. Сочетайте с мягким хаки и молочным — получится гармоничный и живой образ.'
+    },
+    yellow: {
+      hex: '#e6c34a', rgb: '230, 195, 74', name: 'Жёлтый',
+      text: 'Ваш цвет — <strong>жёлтый</strong>. Это цвет света, оптимизма и ясности. Он приносит радость и располагает к общению.<br><br>Попробуйте светло-серую базу, жёлтые детали в виде платка, сумки или украшений, белые рубашки. Жёлтый любит простоту и чистые формы — не перегружайте образ.'
+    },
+    green: {
+      hex: '#4a9d6a', rgb: '74, 157, 106', name: 'Зелёный',
+      text: 'Ваш цвет — <strong>зелёный</strong>. Это цвет спокойствия, роста и природной гармонии. Он ассоциируется с надёжностью и внутренним равновесием.<br><br>Вам к лицу оливковые и изумрудные оттенки, натуральные ткани, деревянные аксессуары, обувь в земляных тонах. Хорошо сочетается с бежевым, белым и тёмно-серым.'
+    },
+    blue: {
+      hex: '#4a90e2', rgb: '74, 144, 226', name: 'Голубой',
+      text: 'Ваш цвет — <strong>голубой</strong>. Это цвет лёгкости, воздуха и доверия. Он создаёт ощущение свежести и открытости.<br><br>Подойдут белые и молочные базовые вещи, голубые рубашки и платья, серебряные украшения, светлая обувь. Отлично смотрится с серым и песочным — получится элегантный повседневный образ.'
+    },
+    navy: {
+      hex: '#2c4a7c', rgb: '44, 74, 124', name: 'Синий',
+      text: 'Ваш цвет — <strong>синий</strong>. Это цвет глубины, элегантности и уверенности. Он говорит о спокойной силе и вкусе.<br><br>В гардеробе — тёмно-синие брюки и пиджаки, белые рубашки, кожаные аксессуары, серебро. Синий универсален: сочетайте с серым, бежевым, бордовым. Это цвет, который всегда выглядит дорого.'
+    },
+    purple: {
+      hex: '#8a5cb8', rgb: '138, 92, 184', name: 'Фиолетовый',
+      text: 'Ваш цвет — <strong>фиолетовый</strong>. Это цвет творчества, интуиции и внутренней глубины. Он выделяет из толпы и говорит об индивидуальности.<br><br>Попробуйте серую и чёрную базу, фиолетовые акценты в виде шарфа или украшений, ткани с лёгким блеском. Избегайте ярких контрастов — пусть образ будет загадочным и глубоким.'
+    },
+    pink: {
+      hex: '#e07a9e', rgb: '224, 122, 158', name: 'Розовый',
+      text: 'Ваш цвет — <strong>розовый</strong>. Это цвет нежности, романтики и тепла. Он смягчает образ и добавляет ему лёгкости.<br><br>Вам подойдут пудровые и молочные оттенки в базе, розовые аксессуары, жемчужные украшения, светлые ткани. Сочетайте с серым и белым — получится утончённый и современный образ.'
+    }
+  };
+
+  // =================== Читаем параметры из URL ===================
+  const params  = new URLSearchParams(location.search);
+  const key     = (params.get('color') || 'blue').toLowerCase();
+  const name    = params.get('name') || 'Дорогой гость';
+  const color   = COLORS[key] || COLORS.blue;
+
+  // =================== Подставляем данные ===================
+  document.documentElement.style.setProperty('--accent', color.hex);
+  document.documentElement.style.setProperty('--accent-rgb', color.rgb);
+
+  document.getElementById('nameEl').textContent           = name;
+  document.getElementById('colorNameEl').textContent      = color.name;
+  document.getElementById('recommendationsEl').innerHTML  = color.text;
+
+  // =================== Логика открытия ===================
+  const envelope = document.getElementById('envelope');
+  const hint     = document.getElementById('hint');
+  const card     = document.getElementById('card');
+  let opened     = false;
+
+  function openEnvelope() {
+    if (opened) return;
+    opened = true;
+
+    envelope.classList.add('open');
+    hint.classList.add('hidden');
+    document.body.classList.add('opened');
+
+    // Карточка появляется, когда письмо уже «вылетело»
+    setTimeout(() => card.classList.add('show'), 1500);
+  }
+
+  envelope.addEventListener('click', openEnvelope);
+  hint.addEventListener('click', openEnvelope);
+</script>
+</body>
+</html>
